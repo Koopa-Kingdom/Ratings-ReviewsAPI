@@ -1,13 +1,19 @@
 require('dotenv').config();
+const { Pool, Client } = require('pg');
 
-// const connection = {
-//   host: process.env.HOST,
-//   port: process.env.PORT,
-//   database: process.env.DATABASE,
-//   user: process.env.USER,
-//   password: process.env.PASSWORD
-// };
+const pool = new Pool({
+  host: process.env.HOST,
+  port: process.env.PORT,
+  database: process.env.DATABASE,
+  user: process.env.USER,
+  password: process.env.PASSWORD
+});
 
-const connection = `postgresql:${process.env.USER}:${process.env.PASSWORD}@${process.env.HOST}:${process.env.DBPORT}/${process.env.DATABASE}`;
+// //alternative way of connecting
+// const connection = `postgresql:${process.env.PGUSER}:${process.env.PGPASSWORD}@${process.env.PGHOST}:${process.env.PGPORT}/${process.env.PGDATABASE}`;
 
-const db;
+//Define queries
+pool
+  .query('SELECT NOW() as now')
+  .then(response => console.log(response.rows[0]))
+  .catch(error => console.error(error.stack));
