@@ -1,10 +1,18 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
+const {pool, fetch} = require('../database/db.js');
 
 app.listen(process.env.PORT, () => {
   console.log(`Example app listening on port ${process.env.PORT}`)
 });
+
+//pool.connect();
+
+// //Invoke middleware
+// app.use(express.json());
+// app.use(express.urlencoded());
+
 
 //Define API routes
 //Get reviews for a product
@@ -18,8 +26,10 @@ app.get('/reviews', (req, res) => {
 
 //Get review metadata for a product
 app.get('/reviews/meta', (req, res) => {
-  res.send('This is the metadata')
-})
+  fetch();
+  res.send('This is the metadata');
+  client.end;
+});
 
 //Add a review to a product
 app.post('/reviews', (req, res) => {
@@ -31,6 +41,7 @@ app.put('/reviews/:review_id', (req, res) => {
   console.log('request params', req.params);
   let reviewID = req.params.review_id;
   console.log('review id', reviewID);
+
   res.send('Updated to helpful');
 });
 
