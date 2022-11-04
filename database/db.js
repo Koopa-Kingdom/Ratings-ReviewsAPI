@@ -14,15 +14,6 @@ const pool = new Pool({
 
 //pool.connect();
 
-// const fetch = pool.query('Select * from reviews where id < 10', (err, res) => {
-//   if (!err) {
-//     console.log(res.rows);
-//   } else {
-//     console.log(err.message);
-//   }
-//   pool.end;
-// });
-
 //Define queries
 let fetch = () => {
   console.log('inside of database query');
