@@ -1,34 +1,57 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
-const {pool, fetch} = require('../database/db.js');
+const {pool, getReviews, getMeta} = require('../database/db.js');
 
 app.listen(process.env.PORT, () => {
-  console.log(`Example app listening on port ${process.env.PORT}`)
+  console.log(`Listening on port ${process.env.PORT}`)
 });
 
 //pool.connect();
 
 // //Invoke middleware
-// app.use(express.json());
+app.use(express.json());
 // app.use(express.urlencoded());
 
 
 //Define API routes
 //Get reviews for a product
-app.get('/reviews', (req, res) => {
-  console.log('this is the query', req.query);
-  let product = req.query.product_id;
-  console.log('product id', product);
 
-  res.send('These are the reviews');
+app.get('/reviews', (req, res) => {
+  let product = req.query.product_id;
+  let page = req.query.page || 1;
+  let count = req.query.count || 5;
+  let sort = req.query.sort || 'newest';
+
+  getReviews(product)
+    .then((data) => {
+      let formattedData = {
+        product: product,
+        page: page,
+        count: count,
+        results: data.rows
+      }
+      res.status(200).send(formattedData);
+    })
+    .catch(error => console.error(error.stack));
 });
 
 //Get review metadata for a product
 app.get('/reviews/meta', (req, res) => {
-  fetch();
-  res.send('This is the metadata');
-  client.end;
+  let product = req.query.product_id;
+
+  getMeta(product)
+    .then((data) => {
+      console.log(data.rows);
+      let formattedData = {
+        product_id: product,
+        ratings: {},
+        recommended: {},
+        characteristics: {}
+      }
+      res.status(200).send(data.rows);
+    })
+    .catch(error => console.error(error.stack));
 });
 
 //Add a review to a product
