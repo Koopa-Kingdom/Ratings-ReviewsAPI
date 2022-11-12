@@ -29,12 +29,10 @@ const getMeta = (product) => {
 name FROM characteristics WHERE product_id = ${product};`);
 }
 
-const addReview = (object) => {
-  return pool.query(`INSERT INTO reviews (product_id}, rating, (select extract(epoch from now())), summary, body, recommend, reported,
-    reviewer_name, reviewer_email, response, helpfulness)
-VALUES
-(${object.product_id}, ${object.rating}, (select extract(epoch from now())), ${object.summary}, ${object.body}, ${object.recommend}, false,
-${object.name}, '${object.email}', DEFAULT, DEFAULT);`);
+const addReview = (review) => {
+  return pool.query(`INSERT INTO reviews (product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness)
+VALUES (${review.product_id}, ${review.rating}, (select extract(epoch from now())), ${review.summary}, ${review.body}, ${review.recommend}, false,
+${review.name}, ${review.email}, DEFAULT, DEFAULT);`);
 };
 
 const markHelpful = (reviewID) => {

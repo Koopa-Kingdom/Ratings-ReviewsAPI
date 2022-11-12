@@ -1,8 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
-const bodyParser = require('body-parser');
-const {pool, getReviews, getMeta, markHelpful, reportReview} = require('../database/db.js');
+const {pool, getReviews, getMeta, addReview, markHelpful, reportReview} = require('../database/db.js');
 //const cors = require('cors');
 
 //app.use(cors());
@@ -34,6 +33,7 @@ app.get('/reviews', (req, res) => {
         count: count,
         results: data.rows
       }
+      console.log('response', res)
       res.status(200).send(formattedData);
     })
     .catch(error => console.error(error.stack));
@@ -52,8 +52,9 @@ app.get('/reviews/meta', (req, res) => {
 
 //Add a review to a product
 app.post('/reviews', (req, res) => {
+  console.log(req.body)
   addReview(req.body)
-    .then((data) => {
+    .then(() => {
       res.status(201).send('Created');
     })
     .catch(err => console.error(err.stack));
