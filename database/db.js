@@ -13,7 +13,7 @@ const pool = new Pool({
 
 //Define queries
 const getReviews = (product, page, count, sort) => {
-  return pool.query(`SELECT reviews.review_id, rating, summary, recommend, response, body, date, reviewer_name, (SELECT JSON_AGG(result) FROM
+  return pool.query(`SELECT reviews.review_id, rating, summary, recommend, response, body, to_char(to_timestamp(date / 1000), 'DD/MM/YYYY HH24:MI:SS') AS date, reviewer_name, (SELECT JSON_AGG(result) FROM
     (SELECT photos.id, url FROM photos WHERE review_id = reviews.review_id) AS result) AS photos
   FROM reviews WHERE product_id = ${product};`);
 };
@@ -29,8 +29,12 @@ const getMeta = (product) => {
 name FROM characteristics WHERE product_id = ${product};`);
 }
 
-const addReview = () => {
-
+const addReview = (object) => {
+  return pool.query(`INSERT INTO reviews (product_id}, rating, (select extract(epoch from now())), summary, body, recommend, reported,
+    reviewer_name, reviewer_email, response, helpfulness)
+VALUES
+(${object.product_id}, ${object.rating}, (select extract(epoch from now())), ${object.summary}, ${object.body}, ${object.recommend}, false,
+${object.name}, '${object.email}', DEFAULT, DEFAULT);`);
 };
 
 const markHelpful = (reviewID) => {
@@ -90,3 +94,5 @@ module.exports.reportReview = reportReview;
 //   (SELECT AVG(value) FROM ratings
 //   WHERE characteristic_id = characteristics.id) AS average
 // FROM characteristics WHERE product_id = 66642) AS result;
+
+//Add fabricated data to json_build_object

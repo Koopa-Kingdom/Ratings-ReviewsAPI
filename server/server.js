@@ -1,7 +1,11 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
+const bodyParser = require('body-parser');
 const {pool, getReviews, getMeta, markHelpful, reportReview} = require('../database/db.js');
+//const cors = require('cors');
+
+//app.use(cors());
 
 app.listen(process.env.PORT, () => {
   console.log(`Listening on port ${process.env.PORT}`)
@@ -55,24 +59,15 @@ app.get('/reviews/meta', (req, res) => {
 
 //Add a review to a product
 app.post('/reviews', (req, res) => {
-  let product = req.query.product_id;
-  let rating = req.query.rating;
-  let summary = req.query.summary;
-  let body = req.query.body;
-  let recommend = req.query.recommend;
-  let name = req.query.name;
-  let email = req.query.email;
-  let photos = req.query.photos;
-  let characteristics = req.query.characteristics;
-
-  res.send('Review was posted');
+  console.log('request body', req.body)
+  res.status(201).send('Review was posted');
 });
 
 //Update a review as helpful
 app.put('/reviews/:review_id/helpful', (req, res) => {
   let reviewID = req.params.review_id;
   markHelpful(reviewID)
-    .then(() => res.status(204).end('Updated to helpful'))
+    .then(() => res.status(204).send('Updated to helpful'))
     .catch(err => console.error(err.stack));
 });
 
@@ -80,6 +75,6 @@ app.put('/reviews/:review_id/helpful', (req, res) => {
 app.put('/reviews/:review_id/report', (req, res) => {
   let reviewID = req.params.review_id;
   reportReview(reviewID)
-    .then(() => res.status(204).end('Reported!'))
+    .then(() => res.status(204).send('Reported!'))
     .catch(err => console.error(err.stack));
 });
