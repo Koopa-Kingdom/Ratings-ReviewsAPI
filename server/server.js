@@ -20,7 +20,6 @@ app.use(express.json());
 
 //Define API routes
 //Get reviews for a product
-
 app.get('/reviews', (req, res) => {
   let product = req.query.product_id;
   let page = req.query.page || 1;
@@ -46,12 +45,6 @@ app.get('/reviews/meta', (req, res) => {
 
   getMeta(product)
     .then((data) => {
-      let formattedData = {
-        product_id: product,
-        ratings: {},
-        recommended: {},
-        characteristics: {}
-      }
       res.status(200).send(data.rows);
     })
     .catch(error => console.error(error.stack));
@@ -59,8 +52,11 @@ app.get('/reviews/meta', (req, res) => {
 
 //Add a review to a product
 app.post('/reviews', (req, res) => {
-  console.log('request body', req.body)
-  res.status(201).send('Review was posted');
+  addReview(req.body)
+    .then((data) => {
+      res.status(201).send('Created');
+    })
+    .catch(err => console.error(err.stack));
 });
 
 //Update a review as helpful
