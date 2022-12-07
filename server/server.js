@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
-const {pool, getReviews, getMeta, addReview, markHelpful, reportReview} = require('../database/db.js');
+const {getReviews, getMeta, addReview, markHelpful, reportReview} = require('../database/controllers/fetchData.js');
 //const cors = require('cors');
 
 //app.use(cors());
@@ -33,7 +33,6 @@ app.get('/reviews', (req, res) => {
         count: count,
         results: data.rows
       }
-      console.log('response', res)
       res.status(200).send(formattedData);
     })
     .catch(error => console.error(error.stack));

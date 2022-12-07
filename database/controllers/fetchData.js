@@ -1,15 +1,4 @@
-require('dotenv').config();
-const { Pool, Client } = require('pg');
-
-const pool = new Pool({
-  host: process.env.PGHOST,
-  port: process.env.PGPORT,
-  database: process.env.PGDATABASE,
-  user: process.env.PGUSER,
-  password: process.env.PGPASSWORD
-});
-
-//pool.connect();
+const { pool } = require('../models/db')
 
 //Define queries
 const getReviews = (product, page, count, sort) => {
@@ -43,7 +32,6 @@ const reportReview = (reviewID) => {
   return pool.query(`UPDATE reviews SET reported = true WHERE review_id = ${reviewID}`);
 };
 
-module.exports.pool = pool;
 module.exports.getReviews = getReviews;
 module.exports.getMeta = getMeta;
 module.exports.addReview = addReview;
