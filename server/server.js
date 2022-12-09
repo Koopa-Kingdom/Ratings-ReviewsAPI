@@ -25,14 +25,19 @@ app.get('/reviews', (req, res) => {
   let count = req.query.count || 5;
   let sort = req.query.sort || 'newest';
 
+  if (count > 20) {
+    count = 20;
+  }
+
   getReviews(product)
     .then((data) => {
       let formattedData = {
         product: product,
         page: page,
         count: count,
-        results: data.rows
+        results: data.rows.slice(0, count)
       }
+      console.log(data.rows.slice(0, count));
       res.status(200).send(formattedData);
     })
     .catch(error => console.error(error.stack));
