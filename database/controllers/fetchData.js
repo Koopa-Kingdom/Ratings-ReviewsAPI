@@ -8,10 +8,12 @@ const getReviews = (product, page, count, sort) => {
   const startIndex = pageNumber * countNumber - (countNumber - 1);
   const endIndex = pageNumber * countNumber;
 
-  const queryText = `SELECT * FROM (SELECT reviews.review_id, rating, summary, recommend, response, body, to_char(to_timestamp(date / 1000), 'DD/MM/YYYY HH24:MI:SS') AS date, reviewer_name, (SELECT JSON_AGG(result) FROM
-  (SELECT photos.id, url FROM photos WHERE review_id = reviews.review_id) AS result) AS photos, ROW_NUMBER () OVER (ORDER BY review_id ASC) FROM reviews WHERE product_id = $1) AS page WHERE row_number BETWEEN $2 AND $3`;
+  const queryText = `SELECT review_id, rating, summary, recommend, response, body, date, reviewer_name, photos
+  FROM (SELECT reviews.review_id, rating, summary, recommend, response, body, to_char(to_timestamp(date), 'DD/MM/YYYY HH24:MI:SS') AS date, reviewer_name, (SELECT JSON_AGG(result)
+  FROM (SELECT photos.id, url FROM photos WHERE review_id = reviews.review_id) AS result) AS photos, ROW_NUMBER () OVER (ORDER BY review_id ASC)
+  FROM reviews WHERE product_id = $1) AS page WHERE row_number BETWEEN $2 AND $3`;
 
-const parameters = [product, startIndex, endIndex];
+  const parameters = [product, startIndex, endIndex];
   return pool.query(queryText, parameters);
 };
 
@@ -28,7 +30,7 @@ name FROM characteristics WHERE product_id = ${product};`);
 
 const addReview = (review) => {
   const queryText = `INSERT INTO reviews (product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness)
-  VALUES ($1, $2, (select extract(epoch from now())), $3, $4, $5, false,
+  VALUES ($1, $2, (select EXTRACT(EPOCH FROM now())), $3, $4, $5, false,
   $6, $7, DEFAULT, DEFAULT);`;
   const parameters = [review.product_id, review.rating, review.summary, review.body, review.recommend, review.name, review.email];
   return pool.query(queryText, parameters);
