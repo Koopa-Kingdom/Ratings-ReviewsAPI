@@ -29,7 +29,7 @@ app.get('/reviews', (req, res) => {
     count = 20;
   }
 
-  getReviews(product)
+  getReviews(product, page, count, sort)
     .then((data) => {
       let formattedData = {
         product: product,

@@ -2,11 +2,17 @@ const { pool } = require('../models/db')
 
 //Define queries
 const getReviews = (product, page, count, sort) => {
-  const queryText = `SELECT reviews.review_id, rating, summary, recommend, response, body, to_char(to_timestamp(date / 1000), 'DD/MM/YYYY HH24:MI:SS') AS date, reviewer_name, (SELECT JSON_AGG(result) FROM
-  (SELECT photos.id, url FROM photos WHERE review_id = reviews.review_id) AS result) AS photos
-FROM reviews WHERE product_id = $1`;
-const parameter = [product];
-  return pool.query(queryText, parameter);
+
+  const pageNumber = Number(page);
+  const countNumber = Number(count);
+  const startIndex = pageNumber * countNumber - (countNumber - 1);
+  const endIndex = pageNumber * countNumber;
+
+  const queryText = `SELECT * FROM (SELECT reviews.review_id, rating, summary, recommend, response, body, to_char(to_timestamp(date / 1000), 'DD/MM/YYYY HH24:MI:SS') AS date, reviewer_name, (SELECT JSON_AGG(result) FROM
+  (SELECT photos.id, url FROM photos WHERE review_id = reviews.review_id) AS result) AS photos, ROW_NUMBER () OVER (ORDER BY review_id ASC) FROM reviews WHERE product_id = $1) AS page WHERE row_number BETWEEN $2 AND $3`;
+
+const parameters = [product, startIndex, endIndex];
+  return pool.query(queryText, parameters);
 };
 
 const getMeta = (product) => {
