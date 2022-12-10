@@ -49,7 +49,7 @@ app.get('/reviews/meta', (req, res) => {
 
   getMeta(product)
     .then((data) => {
-      res.status(200).send(data.rows);
+      res.status(200).send(data.rows[0].json_build_object);
     })
     .catch(error => console.error(error.stack));
 });

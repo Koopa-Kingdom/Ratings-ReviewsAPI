@@ -25,25 +25,16 @@ const getMeta = (product) => {
     GROUP BY rating) AS subquery),
     'recommended', (SELECT JSON_OBJECT_AGG(recommend, count) FROM
     (SELECT recommend, COUNT(recommend) FROM reviews WHERE product_id = $1::int
-	GROUP BY recommend) AS subquery),
-    'characteristics', (SELECT JSON_BUILD_OBJECT(
-      'product_id', $1::int,
-      'ratings', (SELECT JSON_OBJECT_AGG(rating, count) FROM
-          (SELECT rating, COUNT(rating) FROM reviews WHERE product_id = $1::int
-          GROUP BY rating) AS subquery),
-      'recommend', (SELECT JSON_OBJECT_AGG(recommend, count) FROM
-          (SELECT recommend, COUNT(recommend) FROM reviews WHERE product_id = $1::int
-          GROUP BY recommend) AS subquery),
-      'characteristics', (SELECT JSON_OBJECT_AGG(name, JSON_BUILD_OBJECT(
+	  GROUP BY recommend) AS subquery),
+    'characteristics', (SELECT JSON_OBJECT_AGG(name, JSON_BUILD_OBJECT(
         'id', id,
         'value', avg)
       ) FROM
       (SELECT characteristics.name, characteristics.id, avg(ratings.value)
         FROM characteristics AS characteristics JOIN ratings AS ratings
         ON characteristics.id = ratings.characteristic_id WHERE product_id = $1::int
-        GROUP BY characteristics.id) AS conjoined)
-      )
-    )
+        GROUP BY characteristics.id)
+    AS conjoined)
   )`;
 
   const parameter = [product]
