@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
-const {getReviews, getMeta, addReview, markHelpful, reportReview} = require('../database/controllers/fetchData.js');
+const {getReviews, getMeta, addReview, markHelpful, reportReview} = require('../database/controllers/queries.js');
 //const cors = require('cors');
 
 //app.use(cors());
