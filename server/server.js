@@ -37,7 +37,6 @@ app.get('/reviews', (req, res) => {
         count: count,
         results: data.rows.slice(0, count)
       }
-      console.log(data.rows.slice(0, count));
       res.status(200).send(formattedData);
     })
     .catch(error => console.error(error.stack));
@@ -56,7 +55,6 @@ app.get('/reviews/meta', (req, res) => {
 
 //Add a review to a product
 app.post('/reviews', (req, res) => {
-  console.log(req.body)
   addReview(req.body)
     .then(() => {
       res.status(201).send('Created');
